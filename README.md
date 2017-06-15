@@ -16,4 +16,13 @@ Alternatively run a precompiled version from TBD.
 
 Next in your ZeroTier network members add a DNS entry pointing to the member running ztdns.  
 
+
+## TODO
+
+1. [ ] Mkconfig command  
+1. [ ] Update DNSDatabase with zt devices  
+1. [ ] Improve Documentation  
+1. [ ] Finish Readme  
+  
+
 ...
