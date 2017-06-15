@@ -5,10 +5,10 @@ package dnssrv
 
 import (
 	"fmt"
-	"log"
 	"net"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/miekg/dns"
 )
 
@@ -29,13 +29,22 @@ var queryChan chan bool
 // Start brings up a DNS server for the specified suffix on a given port.
 func Start(port int, suffix string, req chan bool) error {
 	queryChan = req
+
+	if port == 0 {
+		port = 53
+	}
+
+	if suffix == "" {
+		log.Fatal("No DNS Suffix provided.")
+	}
+
 	dns.HandleFunc(suffix, handleDNSRequest)
 
 	server := &dns.Server{
 		Addr: fmt.Sprintf(":%d", port),
 		Net:  "udp",
 	}
-	log.Printf("Starting server for %s on %d\n", suffix, port)
+	log.Printf("Starting server for %s on %d", suffix, port)
 	err := server.ListenAndServe()
 	if err != nil {
 		return fmt.Errorf("failed to start DNS server: %s", err.Error())

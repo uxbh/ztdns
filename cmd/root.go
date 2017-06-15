@@ -4,10 +4,7 @@
 package cmd
 
 import (
-	"fmt"
-	"log"
-	"os"
-
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 )
@@ -27,8 +24,8 @@ network for both A (IPv4) and AAAA (IPv6) requests`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		fmt.Println(err)
-		os.Exit(-1)
+		log.Fatal(err)
+		// os.Exit(-1)
 	}
 }
 
@@ -54,7 +51,7 @@ func initConfig() {
 
 	// If a config file is found, read it in.
 	if err := viper.ReadInConfig(); err != nil {
-		log.Printf("Error Reading Config file: %s", err.Error())
-		log.Printf("Try creating a new one with %s mkconfig", os.Args[0])
+		log.Warnf("Error Reading Config file: %s", err.Error())
+		log.Warnf("Try creating a new one with \"ztdns mkconfig\"")
 	}
 }

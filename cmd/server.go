@@ -4,10 +4,10 @@
 package cmd
 
 import (
-	"log"
 	"net"
 	"time"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
 	"gitlab.com/uxbh/ztdns/dnssrv"
@@ -22,9 +22,14 @@ var serverCmd = &cobra.Command{
 	
 	Example: ztdns server`,
 	Run: func(cmd *cobra.Command, args []string) {
-		if viper.GetString("API") == "" {
+		log.SetLevel(log.InfoLevel)
+		if viper.GetString("ZT.API") == "" {
 			log.Fatal("No API key provided")
 		}
+		if viper.GetString("ZT.URL") == "" {
+			log.Fatal("No URL provided. Run ztdns mkconfig first")
+		}
+		log.Debugf("Using API: %s", viper.GetString("ZT.API"))
 		if viper.GetString("ZT.Network") == "" {
 			log.Fatal("No Network ID Provided")
 		}
@@ -33,8 +38,9 @@ var serverCmd = &cobra.Command{
 		go dnssrv.Start(viper.GetInt("port"), viper.GetString("suffix"), req)
 		for {
 			<-req
+			log.Debug("Got Request")
 			if time.Since(lastUpdate) > 30*time.Minute {
-				log.Printf("DNSDatabase is stale. Refreshing.")
+				log.Infof("DNSDatabase is stale. Refreshing.")
 				lastUpdate = updateDNS()
 			}
 		}
@@ -46,14 +52,14 @@ func init() {
 }
 
 func updateDNS() time.Time {
-	API := viper.GetString("API")
+	API := viper.GetString("ZT.API")
 	URL := viper.GetString("ZT.URL")
 	NetworkID := viper.GetString("ZT.Network")
 	suffix := viper.GetString("suffix")
 	ztnetwork := ztapi.GetNetworkInfo(API, URL, NetworkID)
-	log.Printf("Got Network: %s\n", ztnetwork.Config.Name)
+	log.Infof("Getting Members of Network: %s", ztnetwork.Config.Name)
 	lst := ztapi.GetMemberList(API, URL, ztnetwork.ID)
-	log.Printf("Got %d members", len(*lst))
+	log.Infof("Got %d members", len(*lst))
 	for _, n := range *lst {
 		if n.Online {
 			var ip6 net.IP
@@ -72,9 +78,8 @@ func updateDNS() time.Time {
 			default:
 				ip4 = nil
 			}
-			//fmt.Println(n.Name, n.NetworkID, n.NodeID, ip4, ip6)
 			record := n.Name + "." + suffix + "."
-			log.Printf("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
+			log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
 			dnssrv.DNSDatabase[record] = dnssrv.Records{
 				A:    ip4,
 				AAAA: ip6,
