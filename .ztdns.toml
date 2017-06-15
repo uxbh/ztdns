@@ -10,5 +10,5 @@ API = ""
 # Network is your ZeroTier network ID.
 Network = ""
 # URL is the url of the ZeroTier controller API
-URL = "https://my.zerotier.com"
+URL = "https://my.zerotier.com/api"
 
