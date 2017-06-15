@@ -1,4 +1,4 @@
-// Copyright © 2017 Aaryn Smith <unixblackhole@gmail.com>
+// Copyright © 2017 uxbh
 // This file is part of gitlab.com/uxbh/ztdns.
 
 package cmd
