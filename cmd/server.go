@@ -22,7 +22,11 @@ var serverCmd = &cobra.Command{
 	
 	Example: ztdns server`,
 	Run: func(cmd *cobra.Command, args []string) {
-		log.SetLevel(log.InfoLevel)
+		if viper.GetBool("debug") {
+			log.SetLevel(log.DebugLevel)
+			log.Debug("Setting Debug Mode")
+		}
+
 		if viper.GetString("ZT.API") == "" {
 			log.Fatal("No API key provided")
 		}
