@@ -4,7 +4,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"net"
 	"time"
@@ -33,12 +32,10 @@ var serverCmd = &cobra.Command{
 		req := make(chan bool)
 		go dnssrv.Start(viper.GetInt("port"), viper.GetString("suffix"), req)
 		for {
-			select {
-			case <-req:
-				if time.Since(lastUpdate) > 30*time.Minute {
-					fmt.Printf("DNSDatabase is stale. Refreshing.")
-					lastUpdate = updateDNS()
-				}
+			<-req
+			if time.Since(lastUpdate) > 30*time.Minute {
+				log.Printf("DNSDatabase is stale. Refreshing.")
+				lastUpdate = updateDNS()
 			}
 		}
 	},
