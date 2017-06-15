@@ -6,6 +6,7 @@ package dnssrv
 import (
 	"fmt"
 	"net"
+	"time"
 
 	"github.com/miekg/dns"
 )
@@ -16,11 +17,17 @@ type Records struct {
 	AAAA net.IP
 }
 
+// DNSUpdate is the last time the DNSDatabase was updated.
+var DNSUpdate = time.Time{}
+
 // DNSDatabase is a map of hostnames to the records associated with it.
 var DNSDatabase = map[string]Records{}
 
+var queryChan chan bool
+
 // Start brings up a DNS server for the specified suffix on a given port.
-func Start(port int, suffix string) error {
+func Start(port int, suffix string, req chan bool) error {
+	queryChan = req
 	dns.HandleFunc(suffix, handleDNSRequest)
 
 	server := &dns.Server{
@@ -52,6 +59,7 @@ func handleDNSRequest(w dns.ResponseWriter, r *dns.Msg) {
 
 // parseQuery reads and creates an answer to a DNS query.
 func parseQuery(m *dns.Msg) {
+	queryChan <- true
 	for _, q := range m.Question {
 		if rec, ok := DNSDatabase[q.Name]; ok {
 			switch q.Qtype {
