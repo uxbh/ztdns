@@ -5,6 +5,7 @@ package dnssrv
 
 import (
 	"fmt"
+	"log"
 	"net"
 	"time"
 
@@ -34,7 +35,7 @@ func Start(port int, suffix string, req chan bool) error {
 		Addr: fmt.Sprintf(":%d", port),
 		Net:  "udp",
 	}
-	fmt.Printf("Starting server for %s on %d\n", suffix, port)
+	log.Printf("Starting server for %s on %d\n", suffix, port)
 	err := server.ListenAndServe()
 	if err != nil {
 		return fmt.Errorf("failed to start DNS server: %s", err.Error())

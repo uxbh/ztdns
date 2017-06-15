@@ -7,7 +7,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
-	"net/http/httputil"
 )
 
 // getJSON makes a request to the ZeroTier API and returns a JSON object
@@ -24,13 +23,5 @@ func getJSON(url, APIToken string, target interface{}) error {
 		return err
 	}
 	defer r.Body.Close()
-
-	if false {
-		s, _ := httputil.DumpRequest(req, true)
-		fmt.Printf("Request:\n%s\n", s)
-		s, _ = httputil.DumpResponse(r, true)
-		fmt.Printf("Response:\n%s\n", s)
-	}
-
 	return json.NewDecoder(r.Body).Decode(target)
 }
