@@ -1,0 +1,12 @@
+# Configuration file for ztDNS
+
+
+# This section contains information related to your ZeroTier config
+[ZT]
+# API is used to contact the ZeroTier controller API service.
+API = ""
+# Network is your ZeroTier network ID.
+Network = ""
+# URL is the url of the ZeroTier controller API
+URL = "https://my.zerotier.com"
+
