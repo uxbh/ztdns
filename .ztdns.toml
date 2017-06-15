@@ -1,5 +1,7 @@
 # Configuration file for ztDNS
 
+suffix = "zt"
+port = 53
 
 # This section contains information related to your ZeroTier config
 [ZT]
