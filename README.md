@@ -20,7 +20,7 @@ Next in your ZeroTier network members add a DNS entry pointing to the member run
 
 1. [ ] 1st Release
 1. [ ] Nicer logging
-1. [ ] Mkconfig command  
+1. [X] Mkconfig command  
 1. [X] Update DNSDatabase with zt devices  
 1. [ ] Improve Documentation  
 1. [ ] Get listen IP by interface
