@@ -4,9 +4,9 @@
 package cmd
 
 import (
-	"log"
 	"os"
 
+	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 )
 
@@ -19,18 +19,18 @@ If you do not specify a filename the default is ./.ztdns.toml
 
 Example: ztdns mkconfig .filenames.toml`,
 	Run: func(cmd *cobra.Command, args []string) {
-		// TODO: Work your own magic here
-		filename := "./.ztdns.new.toml"
+		filename := "./.ztdns.toml"
 		if len(args) > 0 {
 			filename = args[0]
 		}
-		log.Printf("Creating new config file in %s", filename)
-		file, err := os.Create(filename)
-		if err != nil {
-			log.Fatalf("Could not create file: %s", err.Error())
-		}
-		defer file.Close()
-		file.WriteString(`# Configuration file for ztDNS
+		if _, err := os.Stat(filename); os.IsNotExist(err) {
+			log.Printf("Creating new config file in %s", filename)
+			file, err := os.Create(filename)
+			if err != nil {
+				log.Fatalf("Could not create file: %s", err.Error())
+			}
+			defer file.Close()
+			file.WriteString(`# Configuration file for ztDNS
 
 suffix = "zt"
 port = 53
@@ -44,6 +44,7 @@ Network = ""
 # URL is the url of the ZeroTier controller API
 URL = "https://my.zerotier.com/api"
 `)
+		}
 	},
 }
 
