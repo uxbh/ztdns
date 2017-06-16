@@ -8,13 +8,25 @@ ztDNS pulls device names from Zerotier and makes them available by name using ei
 
 ## Installing
 
-Using ztDNS is easy. First use ```go get``` to install the latest version. 
-```
-go get -u gitlab.com/uxbh/ztdns/
-```
-Alternatively run a precompiled release from [https://gitlab.com/uxbh/ztdns/tags](https://gitlab.com/uxbh/ztdns/tags).  
+1. First use ```go get``` to install the latest version, or download a precompiled relesase from [https://gitlab.com/uxbh/ztdns/tags](https://gitlab.com/uxbh/ztdns/tags)  
+	```
+	go get -u gitlab.com/uxbh/ztdns/
+	```
+1. Add a new API access token to your user under the account tab at [https://my.zerotier.com](https://my.zerotier.com/).  
+	If you do not want to store your API access token in the config file you can also run the  
+	server with the ```env``` command: ```env 'ZTDNS_ZT.API=<<APIToken>>' ./ztdns server```
+1. Run ```ztdns mkconfig``` to generate a sample config file.  
+1. Add your API access token and Network ID, and interface name to the config.  
+1. Start the server using ```ztdns server```.  
+1. Add a DNS entry in your ZeroTier members pointing to the member running ztdns.  
 
-Next in your ZeroTier network members add a DNS entry pointing to the member running ztdns.  
+Once the server is up and running you will be able to resolve names based on the short name and suffix defined in the config file (zt by default) from ZeroTier.  
+```
+dig @serveraddress member.zt A
+dig @serveraddress member.zt AAAA
+ping member.zt
+```
+
 
 ## TODO
 

@@ -14,8 +14,8 @@ import (
 
 // Records contains the types of records the server will respond to.
 type Records struct {
-	A    net.IP
-	AAAA net.IP
+	A    []net.IP
+	AAAA []net.IP
 }
 
 // DNSUpdate is the last time the DNSDatabase was updated.
@@ -112,14 +112,18 @@ func parseQuery(m *dns.Msg) {
 		if rec, ok := DNSDatabase[q.Name]; ok {
 			switch q.Qtype {
 			case dns.TypeA:
-				rr, err := dns.NewRR(fmt.Sprintf("%s A %s", q.Name, rec.A.String()))
-				if err == nil {
-					m.Answer = append(m.Answer, rr)
+				for _, ip := range rec.A {
+					rr, err := dns.NewRR(fmt.Sprintf("%s A %s", q.Name, ip.String()))
+					if err == nil {
+						m.Answer = append(m.Answer, rr)
+					}
 				}
 			case dns.TypeAAAA:
-				rr, err := dns.NewRR(fmt.Sprintf("%s AAAA %s", q.Name, rec.AAAA.String()))
-				if err == nil {
-					m.Answer = append(m.Answer, rr)
+				for _, ip := range rec.AAAA {
+					rr, err := dns.NewRR(fmt.Sprintf("%s AAAA %s", q.Name, ip.String()))
+					if err == nil {
+						m.Answer = append(m.Answer, rr)
+					}
 				}
 			}
 		}

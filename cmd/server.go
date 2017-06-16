@@ -68,23 +68,19 @@ func updateDNS() time.Time {
 	log.Infof("Got %d members", len(*lst))
 	for _, n := range *lst {
 		if n.Online {
-			var ip6 net.IP
-			var ip4 net.IP
-			switch {
-			case ztnetwork.Config.V6AssignMode.Sixplane:
-				ip6 = n.Get6Plane()
-			case ztnetwork.Config.V6AssignMode.Rfc4193:
-				ip6 = n.GetRFC4193()
-			default:
-				ip6 = nil
-			}
-			switch {
-			case len(n.Config.IPAssignments) > 0:
-				ip4 = net.ParseIP(n.Config.IPAssignments[0])
-			default:
-				ip4 = nil
-			}
 			record := n.Name + "." + suffix + "."
+			dnssrv.DNSDatabase[record] = dnssrv.Records{}
+			ip6 := []net.IP{}
+			ip4 := []net.IP{}
+			if ztnetwork.Config.V6AssignMode.Sixplane {
+				ip6 = append(ip6, n.Get6Plane())
+			}
+			if ztnetwork.Config.V6AssignMode.Rfc4193 {
+				ip6 = append(ip6, n.GetRFC4193())
+			}
+			for _, a := range n.Config.IPAssignments {
+				ip4 = append(ip4, net.ParseIP(a))
+			}
 			log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
 			dnssrv.DNSDatabase[record] = dnssrv.Records{
 				A:    ip4,
