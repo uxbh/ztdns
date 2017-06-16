@@ -8,7 +8,7 @@ ztDNS pulls device names from Zerotier and makes them available by name using ei
 
 ## Installing
 
-1. First use ```go get``` to install the latest version, or download a precompiled relesase from [https://github.com/uxbh/ztdns/tags](https://github.com/uxbh/ztdns/tags)  
+1. First use ```go get``` to install the latest version, or download a precompiled relesase from [https://github.com/uxbh/ztdns/releases](https://github.com/uxbh/ztdns/releases)  
 ```
 go get -u github.com/uxbh/ztdns/
 ```
