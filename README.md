@@ -8,9 +8,9 @@ ztDNS pulls device names from Zerotier and makes them available by name using ei
 
 ## Installing
 
-1. First use ```go get``` to install the latest version, or download a precompiled relesase from [https://gitlab.com/uxbh/ztdns/tags](https://gitlab.com/uxbh/ztdns/tags)  
+1. First use ```go get``` to install the latest version, or download a precompiled relesase from [https://github.com/uxbh/ztdns/tags](https://github.com/uxbh/ztdns/tags)  
 ```
-go get -u gitlab.com/uxbh/ztdns/
+go get -u github.com/uxbh/ztdns/
 ```
 2. Add a new API access token to your user under the account tab at [https://my.zerotier.com](https://my.zerotier.com/).  
 	If you do not want to store your API access token in the config file you can also run the  
@@ -27,13 +27,10 @@ dig @serveraddress member.zt AAAA
 ping member.zt
 ```
 
+## Contributing 
 
-## TODO
+Thanks for considering contributing to the project. We welcome contributions, issues or requests from anyone, and are greatful for any help. Problems or questions? Feel free to open an issue on GitHub.
 
-1. [ ] 1st Release
-1. [X] Nicer logging
-1. [X] Mkconfig command  
-1. [X] Update DNSDatabase with zt devices  
-1. [X] Improve Documentation  
-1. [X] Get listen IP by interface
-1. [X] Finish Readme  
+Please make sure yout contributions adhere to the following guidelines:  
+* Code must adhere to the official Go [formating](https://golang.org/doc/effective_go.html#formatting) guidelines  (i.e. uses [gofmt](https://golang.org/cmd/gofmt/)).
+ * Pull requests need to be based on and opened against the `master` branch.
