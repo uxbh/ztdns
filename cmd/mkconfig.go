@@ -17,7 +17,7 @@ var mkconfigCmd = &cobra.Command{
 	Long: `mkconfig (ztdns mkconfig) creates a new configuation file.
 If you do not specify a filename the default is ./.ztdns.toml
 
-Example: ztdns mkconfig .filenames.toml`,
+Example: ztdns mkconfig [.filename.toml]`,
 	Run: func(cmd *cobra.Command, args []string) {
 		filename := "./.ztdns.toml"
 		if len(args) > 0 {
