@@ -34,12 +34,6 @@ func Start(iface string, port int, suffix string, req chan string) error {
 		port = 53
 	}
 
-	if suffix == "" {
-		log.Fatal("No DNS Suffix provided.")
-	}
-
-	dns.HandleFunc(suffix, handleDNSRequest)
-
 	for _, addr := range getIfaceAddrs(iface) {
 		go func(suffix string, addr net.IP, port int) {
 			var server *dns.Server

@@ -24,7 +24,7 @@ network for both A (IPv4) and AAAA (IPv6) requests`,
 // This is called by main.main(). It only needs to happen once to the rootCmd.
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
-		log.Fatal(err)
+		// log.Fatal(err)
 		// os.Exit(-1)
 	}
 }

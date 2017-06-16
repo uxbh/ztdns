@@ -4,6 +4,7 @@
 package cmd
 
 import (
+	"fmt"
 	"net"
 	"time"
 
@@ -21,22 +22,27 @@ var serverCmd = &cobra.Command{
 	Long: `Server (ztdns server) will start the DNS server.append
 	
 	Example: ztdns server`,
-	Run: func(cmd *cobra.Command, args []string) {
+	PreRunE: func(cmd *cobra.Command, args []string) error {
+		// Check config and bail if anything important is missing.
 		if viper.GetBool("debug") {
 			log.SetLevel(log.DebugLevel)
 			log.Debug("Setting Debug Mode")
 		}
-
 		if viper.GetString("ZT.API") == "" {
-			log.Fatal("No API key provided")
+			return fmt.Errorf("no API key provided")
+		}
+		if viper.GetString("ZT.Network") == "" {
+			return fmt.Errorf("no Network ID Provided")
 		}
 		if viper.GetString("ZT.URL") == "" {
-			log.Fatal("No URL provided. Run ztdns mkconfig first")
+			return fmt.Errorf("no URL provided. Run ztdns mkconfig first")
 		}
-		log.Debugf("Using API: %s", viper.GetString("ZT.API"))
-		if viper.GetString("ZT.Network") == "" {
-			log.Fatal("No Network ID Provided")
+		if viper.GetString("suffix") == "" {
+			return fmt.Errorf("no DNS Suffix provided. Run ztdns mkconfig first")
 		}
+		return nil
+	},
+	Run: func(cmd *cobra.Command, args []string) {
 		lastUpdate := updateDNS()
 		req := make(chan string)
 		go dnssrv.Start(viper.GetString("interface"), viper.GetInt("port"), viper.GetString("suffix"), req)
