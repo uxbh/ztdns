@@ -34,6 +34,6 @@ ping member.zt
 1. [X] Nicer logging
 1. [X] Mkconfig command  
 1. [X] Update DNSDatabase with zt devices  
-1. [ ] Improve Documentation  
+1. [X] Improve Documentation  
 1. [X] Get listen IP by interface
-1. [ ] Finish Readme  
+1. [X] Finish Readme  
