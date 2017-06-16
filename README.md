@@ -32,5 +32,5 @@ ping member.zt
 Thanks for considering contributing to the project. We welcome contributions, issues or requests from anyone, and are greatful for any help. Problems or questions? Feel free to open an issue on GitHub.
 
 Please make sure yout contributions adhere to the following guidelines:  
-* Code must adhere to the official Go [formating](https://golang.org/doc/effective_go.html#formatting) guidelines  (i.e. uses [gofmt](https://golang.org/cmd/gofmt/)).
+ * Code must adhere to the official Go [formating](https://golang.org/doc/effective_go.html#formatting) guidelines  (i.e. uses [gofmt](https://golang.org/cmd/gofmt/)).
  * Pull requests need to be based on and opened against the `master` branch.
