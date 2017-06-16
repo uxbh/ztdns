@@ -17,15 +17,19 @@ var listinterfacesCmd = &cobra.Command{
 	Long: `List Interfaces (ztdns listinterfaces) lists the available network interfaces 
 to start the server on.`,
 	Run: func(cmd *cobra.Command, args []string) {
-		ints, _ := net.Interfaces()
-
+		// Get a list of interfaces from net
+		ints, err := net.Interfaces()
+		if err != nil {
+			fmt.Printf("error getting interfaces: %s", err)
+		}
 		for i, n := range ints {
-			addrs, _ := n.Addrs()
 			fmt.Printf("%d: %v\n", i, n.Name)
+			// Get a list of ip address on the interface
+			addrs, _ := n.Addrs()
 			for i, a := range addrs {
 				ip, _, err := net.ParseCIDR(a.String())
 				if err != nil {
-					return
+					continue
 				}
 				fmt.Printf("\t%d: %s\n", i, ip)
 			}
