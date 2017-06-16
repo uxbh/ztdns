@@ -38,11 +38,11 @@ var serverCmd = &cobra.Command{
 			log.Fatal("No Network ID Provided")
 		}
 		lastUpdate := updateDNS()
-		req := make(chan bool)
+		req := make(chan string)
 		go dnssrv.Start(viper.GetString("interface"), viper.GetInt("port"), viper.GetString("suffix"), req)
 		for {
-			<-req
-			log.Debug("Got Request")
+			n := <-req
+			log.Debugf("Got request for %s", n)
 			if time.Since(lastUpdate) > 30*time.Minute {
 				log.Infof("DNSDatabase is stale. Refreshing.")
 				lastUpdate = updateDNS()

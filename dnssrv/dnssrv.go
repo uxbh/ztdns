@@ -24,10 +24,10 @@ var DNSUpdate = time.Time{}
 // DNSDatabase is a map of hostnames to the records associated with it.
 var DNSDatabase = map[string]Records{}
 
-var queryChan chan bool
+var queryChan chan string
 
 // Start brings up a DNS server for the specified suffix on a given port.
-func Start(iface string, port int, suffix string, req chan bool) error {
+func Start(iface string, port int, suffix string, req chan string) error {
 	queryChan = req
 
 	if port == 0 {
@@ -107,8 +107,8 @@ func handleDNSRequest(w dns.ResponseWriter, r *dns.Msg) {
 
 // parseQuery reads and creates an answer to a DNS query.
 func parseQuery(m *dns.Msg) {
-	queryChan <- true
 	for _, q := range m.Question {
+		queryChan <- q.Name
 		if rec, ok := DNSDatabase[q.Name]; ok {
 			switch q.Qtype {
 			case dns.TypeA:
