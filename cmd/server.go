@@ -39,7 +39,7 @@ var serverCmd = &cobra.Command{
 		}
 		lastUpdate := updateDNS()
 		req := make(chan bool)
-		go dnssrv.Start(viper.GetInt("port"), viper.GetString("suffix"), req)
+		go dnssrv.Start(viper.GetString("interface"), viper.GetInt("port"), viper.GetString("suffix"), req)
 		for {
 			<-req
 			log.Debug("Got Request")
@@ -53,6 +53,8 @@ var serverCmd = &cobra.Command{
 
 func init() {
 	RootCmd.AddCommand(serverCmd)
+	serverCmd.PersistentFlags().String("interface", "", "interface to listen on")
+	viper.BindPFlag("interface", serverCmd.PersistentFlags().Lookup("interface"))
 }
 
 func updateDNS() time.Time {

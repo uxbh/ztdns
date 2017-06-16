@@ -34,6 +34,7 @@ Example: ztdns mkconfig .filenames.toml`,
 
 suffix = "zt"
 port = 53
+interface = "zt0"
 
 # This section contains information related to your ZeroTier config
 [ZT]

@@ -27,7 +27,7 @@ var DNSDatabase = map[string]Records{}
 var queryChan chan bool
 
 // Start brings up a DNS server for the specified suffix on a given port.
-func Start(port int, suffix string, req chan bool) error {
+func Start(iface string, port int, suffix string, req chan bool) error {
 	queryChan = req
 
 	if port == 0 {
@@ -40,17 +40,55 @@ func Start(port int, suffix string, req chan bool) error {
 
 	dns.HandleFunc(suffix, handleDNSRequest)
 
-	server := &dns.Server{
-		Addr: fmt.Sprintf(":%d", port),
-		Net:  "udp",
+	for _, addr := range getIfaceAddrs(iface) {
+		go func(suffix string, addr net.IP, port int) {
+			var server *dns.Server
+			if addr.To4().String() == addr.String() {
+				log.Debugf("Creating IPv4 Server: %s:%d udp", addr, port)
+				server = &dns.Server{
+					Addr: fmt.Sprintf("%s:%d", addr, port),
+					Net:  "udp",
+				}
+			} else {
+				log.Debugf("Creating IPv6 Server: [%s]:%d udp6", addr, port)
+				server = &dns.Server{
+					Addr: fmt.Sprintf("[%s]:%d", addr, port),
+					Net:  "udp6",
+				}
+			}
+			log.Printf("Starting server for %s on %s", suffix, server.Addr)
+			err := server.ListenAndServe()
+			if err != nil {
+				log.Fatalf("failed to start DNS server: %s", err.Error())
+			}
+			defer server.Shutdown()
+		}(suffix, addr, port)
 	}
-	log.Printf("Starting server for %s on %d", suffix, port)
-	err := server.ListenAndServe()
-	if err != nil {
-		return fmt.Errorf("failed to start DNS server: %s", err.Error())
-	}
-	defer server.Shutdown()
 	return nil
+}
+
+func getIfaceAddrs(iface string) []net.IP {
+	if iface != "" {
+		retaddrs := []net.IP{}
+		netint, err := net.InterfaceByName(iface)
+		if err != nil {
+			log.Fatalf("Could not get interface: %s\n", err.Error())
+		}
+		addrs, err := netint.Addrs()
+		if err != nil {
+			log.Fatalf("Could not get addresses: %s\n", err.Error())
+		}
+		for _, addr := range addrs {
+			ip, _, err := net.ParseCIDR(addr.String())
+			if err != nil {
+				continue
+			}
+			log.Debugf("Found address: %s", ip.String())
+			retaddrs = append(retaddrs, ip)
+		}
+		return retaddrs
+	}
+	return []net.IP{net.IPv4zero}
 }
 
 // handleDNSRequest routes an incoming DNS request to a parser.
