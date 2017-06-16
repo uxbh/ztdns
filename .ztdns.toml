@@ -4,6 +4,9 @@ suffix = "zt"
 port = 53
 interface = "zt0"
 
+# Number of minutes to wait before updating the DNS database again (Default: 30)
+DBRefresh = 30
+
 # This section contains information related to your ZeroTier config
 [ZT]
 # API is used to contact the ZeroTier controller API service.

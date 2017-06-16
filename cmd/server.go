@@ -43,13 +43,22 @@ var serverCmd = &cobra.Command{
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
+		// Update the DNSDatabase
 		lastUpdate := updateDNS()
 		req := make(chan string)
+		// Start the DNS server
 		go dnssrv.Start(viper.GetString("interface"), viper.GetInt("port"), viper.GetString("suffix"), req)
+
+		refresh := viper.GetInt("DbRefresh")
+		if refresh == 0 {
+			refresh = 30
+		}
 		for {
+			// Block until a new request comes in
 			n := <-req
 			log.Debugf("Got request for %s", n)
-			if time.Since(lastUpdate) > 30*time.Minute {
+			// If the database hasn't been updated in the last "refresh" minutes, update it.
+			if time.Since(lastUpdate) > time.Duration(refresh)*time.Minute {
 				log.Infof("DNSDatabase is stale. Refreshing.")
 				lastUpdate = updateDNS()
 			}
@@ -64,29 +73,42 @@ func init() {
 }
 
 func updateDNS() time.Time {
+	// Get config info
 	API := viper.GetString("ZT.API")
 	URL := viper.GetString("ZT.URL")
 	NetworkID := viper.GetString("ZT.Network")
 	suffix := viper.GetString("suffix")
+
+	// Get ZeroTier Network info
 	ztnetwork := ztapi.GetNetworkInfo(API, URL, NetworkID)
+
+	// Get list of members in network
 	log.Infof("Getting Members of Network: %s", ztnetwork.Config.Name)
 	lst := ztapi.GetMemberList(API, URL, ztnetwork.ID)
 	log.Infof("Got %d members", len(*lst))
+
 	for _, n := range *lst {
+		// For all online members
 		if n.Online {
+			// Clear current DNS records
 			record := n.Name + "." + suffix + "."
 			dnssrv.DNSDatabase[record] = dnssrv.Records{}
 			ip6 := []net.IP{}
 			ip4 := []net.IP{}
+			// Get 6Plane address if network has it enabled
 			if ztnetwork.Config.V6AssignMode.Sixplane {
 				ip6 = append(ip6, n.Get6Plane())
 			}
+			// Get RFC4193 address if network has it enabled
 			if ztnetwork.Config.V6AssignMode.Rfc4193 {
 				ip6 = append(ip6, n.GetRFC4193())
 			}
+
+			// Get the rest of the address assigned to the member
 			for _, a := range n.Config.IPAssignments {
 				ip4 = append(ip4, net.ParseIP(a))
 			}
+			// Add the record to the database
 			log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
 			dnssrv.DNSDatabase[record] = dnssrv.Records{
 				A:    ip4,
@@ -94,5 +116,6 @@ func updateDNS() time.Time {
 			}
 		}
 	}
+	// Return the current update time
 	return time.Now()
 }
