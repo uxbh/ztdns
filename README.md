@@ -11,8 +11,10 @@ ztDNS pulls device names from Zerotier and makes them available by name using ei
 1. First use ```go get``` to install the latest version, or download a precompiled relesase from [https://github.com/uxbh/ztdns/releases](https://github.com/uxbh/ztdns/releases)  
 ```
 go get -u github.com/uxbh/ztdns/
+go build
 ```
-2. Add a new API access token to your user under the account tab at [https://my.zerotier.com](https://my.zerotier.com/).  
+2. **If you are running on linux**, run ```sudo setcap cap_net_bind_service=+eip ./ztdns``` to enable non-root users to bind privalaged ports.
+1. Add a new API access token to your user under the account tab at [https://my.zerotier.com](https://my.zerotier.com/).  
 	If you do not want to store your API access token in the config file you can also run the  
 	server with the ```env``` command: ```env 'ZTDNS_ZT.API=<<APIToken>>' ./ztdns server```
 1. Run ```ztdns mkconfig``` to generate a sample config file.  
