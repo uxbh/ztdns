@@ -78,8 +78,10 @@ func getIfaceAddrs(iface string) []net.IP {
 			if err != nil {
 				continue
 			}
-			log.Debugf("Found address: %s", ip.String())
-			retaddrs = append(retaddrs, ip)
+			if !ip.IsLinkLocalUnicast() {
+				log.Debugf("Found address: %s", ip.String())
+				retaddrs = append(retaddrs, ip)
+			}
 		}
 		return retaddrs
 	}
