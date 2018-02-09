@@ -35,6 +35,9 @@ func Start(iface string, port int, suffix string, req chan string) error {
 		port = 53
 	}
 
+	// attach request handler func
+	dns.HandleFunc(suffix + ".", handleDNSRequest)
+
 	for _, addr := range getIfaceAddrs(iface) {
 		go func(suffix string, addr net.IP, port int) {
 			var server *dns.Server
