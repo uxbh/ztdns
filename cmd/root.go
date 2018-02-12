@@ -37,7 +37,7 @@ func init() {
 	RootCmd.PersistentFlags().Bool("debug", false, "enable debug messages")
 	viper.BindPFlag("debug", RootCmd.PersistentFlags().Lookup("debug"))
 
-	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ztdns.yaml)")
+	RootCmd.PersistentFlags().StringVar(&cfgFile, "config", "", "config file (default is $HOME/.ztdns.toml)")
 
 }
 
