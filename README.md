@@ -18,7 +18,7 @@ If you prefer the traditional installation route:
 
 #### Install
 
-1. First use ```go get``` to install the latest version, or download a precompiled release from [https://github.com/uxbh/ztdns/releases](https://github.com/uxbh/ztdns/releases)
+1. First use `go get` to install the latest version, or download a precompiled release from [https://github.com/uxbh/ztdns/releases](https://github.com/uxbh/ztdns/releases)
 ```
 go get -u github.com/uxbh/ztdns/
 go build
@@ -34,7 +34,7 @@ go build
 
 Once the server is up and running you will be able to resolve names based on the short name and suffix defined in the config file (zt by default) from ZeroTier.
 
-```
+```bash
 dig @serveraddress member.zt A
 dig @serveraddress member.zt AAAA
 ping member.zt
@@ -60,7 +60,7 @@ If you prefer to run the server with Docker:
 
 Once the server is up and running you will be able to resolve names based on the short name and suffix defined in the config file (zt by default) from ZeroTier.
 
-```
+```bash
 # remove -p 5356 if running on port 53
 dig @127.0.0.1 -p 5356 member.zt A
 dig @127.0.0.1 -p 5356 member.zt AAAA
