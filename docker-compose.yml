@@ -1,0 +1,8 @@
+version: '3'
+services:
+  ztdns:
+    build: .
+    ports:
+     - "5356:53/udp"
+    volumes:
+     - .ztdns.toml:/app/.ztdns.toml
