@@ -10,19 +10,25 @@ import (
 )
 
 // GetMemberInfo returns a Member containing informationa about a specific member in a ZeroTier network
-func GetMemberInfo(API, host, networkID, memberID string) *Member {
+func GetMemberInfo(API, host, networkID, memberID string) (*Member, error) {
 	resp := new(Member)
 	url := fmt.Sprintf("%s/network/%s/member/%s", host, networkID, memberID)
-	getJSON(url, API, resp)
-	return resp
+	err := getJSON(url, API, resp)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to get member info: %s", err.Error())
+	}
+	return resp, nil
 }
 
 // GetMemberList gets a Slice of Members in a ZeroTier network
-func GetMemberList(API, host, networkID string) *Members {
+func GetMemberList(API, host, networkID string) (*Members, error) {
 	resp := new(Members)
 	url := fmt.Sprintf("%s/network/%s/member", host, networkID)
-	getJSON(url, API, resp)
-	return resp
+	err := getJSON(url, API, resp)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to get member list: %s", err.Error())
+	}
+	return resp, nil
 }
 
 // Members is a List of Members

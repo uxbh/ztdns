@@ -23,6 +23,9 @@ func getJSON(url, APIToken string, target interface{}) error {
 	if err != nil {
 		return err
 	}
+	if r.StatusCode != 200 {
+		return fmt.Errorf("API returned error: %s", r.Status)
+	}
 	defer r.Body.Close()
 	return json.NewDecoder(r.Body).Decode(target)
 }
