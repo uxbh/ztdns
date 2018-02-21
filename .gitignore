@@ -1,5 +1,7 @@
 /.ztdns.toml
 
+.vscode/
+
 # Binaries for programs and plugins
 /ztdns
 *.exe
