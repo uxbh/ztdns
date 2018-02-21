@@ -80,11 +80,17 @@ func updateDNS() time.Time {
 	suffix := viper.GetString("suffix")
 
 	// Get ZeroTier Network info
-	ztnetwork := ztapi.GetNetworkInfo(API, URL, NetworkID)
+	ztnetwork, err := ztapi.GetNetworkInfo(API, URL, NetworkID)
+	if err != nil {
+		log.Fatalf("Unable to update DNS entries: %s", err.Error())
+	}
 
 	// Get list of members in network
 	log.Infof("Getting Members of Network: %s", ztnetwork.Config.Name)
-	lst := ztapi.GetMemberList(API, URL, ztnetwork.ID)
+	lst, err := ztapi.GetMemberList(API, URL, ztnetwork.ID)
+	if err != nil {
+		log.Fatalf("Unable to update DNS entries: %s", err.Error())
+	}
 	log.Infof("Got %d members", len(*lst))
 
 	for _, n := range *lst {

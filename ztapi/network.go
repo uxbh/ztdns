@@ -6,11 +6,14 @@ package ztapi
 import "fmt"
 
 // GetNetworkInfo returns a Nework containing information about a ZeroTier network
-func GetNetworkInfo(API, host, networkID string) *Network {
+func GetNetworkInfo(API, host, networkID string) (*Network, error) {
 	resp := new(Network)
 	url := fmt.Sprintf("%s/network/%s", host, networkID)
-	getJSON(url, API, resp)
-	return resp
+	err := getJSON(url, API, resp)
+	if err != nil {
+		return nil, fmt.Errorf("Unable to get network info: %s", err.Error())
+	}
+	return resp, nil
 }
 
 // Network contains the JSON response for a request for a network
