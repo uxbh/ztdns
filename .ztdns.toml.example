@@ -11,8 +11,11 @@ DBRefresh = 30
 [ZT]
 # API is used to contact the ZeroTier controller API service.
 API = ""
-# Network is your ZeroTier network ID.
-Network = ""
 # URL is the url of the ZeroTier controller API
 URL = "https://my.zerotier.com/api"
+
+# This section contains one or more ZeroTier networks
+# Format is: domain = "NetworkID"
+# Domain does not have to match the configured network name
+[Networks]
 
