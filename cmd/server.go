@@ -31,8 +31,8 @@ var serverCmd = &cobra.Command{
 		if viper.GetString("ZT.API") == "" {
 			return fmt.Errorf("no API key provided")
 		}
-		if viper.GetString("ZT.Network") == "" {
-			return fmt.Errorf("no Network ID Provided")
+		if len(viper.GetStringMapString("Networks")) == 0 {
+			return fmt.Errorf("no Domain / Network ID pairs Provided")
 		}
 		if viper.GetString("ZT.URL") == "" {
 			return fmt.Errorf("no URL provided. Run ztdns mkconfig first")
@@ -76,46 +76,49 @@ func updateDNS() time.Time {
 	// Get config info
 	API := viper.GetString("ZT.API")
 	URL := viper.GetString("ZT.URL")
-	NetworkID := viper.GetString("ZT.Network")
 	suffix := viper.GetString("suffix")
 
-	// Get ZeroTier Network info
-	ztnetwork := ztapi.GetNetworkInfo(API, URL, NetworkID)
+	// Get all configured networks:
+	for domain, id := range viper.GetStringMapString("Networks") {
+		// Get ZeroTier Network info
+		ztnetwork := ztapi.GetNetworkInfo(API, URL, id)
 
-	// Get list of members in network
-	log.Infof("Getting Members of Network: %s", ztnetwork.Config.Name)
-	lst := ztapi.GetMemberList(API, URL, ztnetwork.ID)
-	log.Infof("Got %d members", len(*lst))
+		// Get list of members in network
+		log.Infof("Getting Members of Network: %s (%s)", ztnetwork.Config.Name, domain)
+		lst := ztapi.GetMemberList(API, URL, ztnetwork.ID)
+		log.Infof("Got %d members", len(*lst))
 
-	for _, n := range *lst {
-		// For all online members
-		if n.Online {
-			// Clear current DNS records
-			record := n.Name + "." + suffix + "."
-			dnssrv.DNSDatabase[record] = dnssrv.Records{}
-			ip6 := []net.IP{}
-			ip4 := []net.IP{}
-			// Get 6Plane address if network has it enabled
-			if ztnetwork.Config.V6AssignMode.Sixplane {
-				ip6 = append(ip6, n.Get6Plane())
-			}
-			// Get RFC4193 address if network has it enabled
-			if ztnetwork.Config.V6AssignMode.Rfc4193 {
-				ip6 = append(ip6, n.GetRFC4193())
-			}
+		for _, n := range *lst {
+			// For all online members
+			if n.Online {
+				// Clear current DNS records
+				record := n.Name + "." + domain + "." + suffix + "."
+				dnssrv.DNSDatabase[record] = dnssrv.Records{}
+				ip6 := []net.IP{}
+				ip4 := []net.IP{}
+				// Get 6Plane address if network has it enabled
+				if ztnetwork.Config.V6AssignMode.Sixplane {
+					ip6 = append(ip6, n.Get6Plane())
+				}
+				// Get RFC4193 address if network has it enabled
+				if ztnetwork.Config.V6AssignMode.Rfc4193 {
+					ip6 = append(ip6, n.GetRFC4193())
+				}
 
-			// Get the rest of the address assigned to the member
-			for _, a := range n.Config.IPAssignments {
-				ip4 = append(ip4, net.ParseIP(a))
-			}
-			// Add the record to the database
-			log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
-			dnssrv.DNSDatabase[record] = dnssrv.Records{
-				A:    ip4,
-				AAAA: ip6,
+				// Get the rest of the address assigned to the member
+				for _, a := range n.Config.IPAssignments {
+					ip4 = append(ip4, net.ParseIP(a))
+				}
+				// Add the record to the database
+				log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
+				dnssrv.DNSDatabase[record] = dnssrv.Records{
+					A:    ip4,
+					AAAA: ip6,
+				}
 			}
 		}
 	}
+
 	// Return the current update time
 	return time.Now()
 }
