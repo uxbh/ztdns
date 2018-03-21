@@ -20,7 +20,7 @@ func GetNetworkInfo(API, host, networkID string) (*Network, error) {
 type Network struct {
 	ID    string
 	Type  string
-	Clock int
+	Clock int64
 	UI    struct {
 		FlowRulesCollapsed    bool
 		MembersCollapsed      bool
@@ -34,8 +34,8 @@ type Network struct {
 		ActiveMemberCount     int
 		AuthorizedMemberCount int
 		Capabilities          []string
-		Clock                 int
-		CreationTime          int
+		Clock                 int64
+		CreationTime          int64
 		EnableBroadcast       bool
 		ID                    string
 		IPAssignmentPools     []struct {

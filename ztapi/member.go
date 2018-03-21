@@ -38,7 +38,7 @@ type Members []Member
 type Member struct {
 	ID           string
 	Type         string
-	Clock        int
+	Clock        int64
 	NetworkID    string
 	NodeID       string
 	ControllerID string
@@ -58,12 +58,12 @@ type Member struct {
 		}
 		Authorized           bool
 		Capabilities         []string
-		CreationTime         int
+		CreationTime         int64
 		ID                   string
 		Identity             string
 		IPAssignments        []string
-		LastAuthorizedTime   int
-		LastDeauthorizedTime int
+		LastAuthorizedTime   int64
+		LastDeauthorizedTime int64
 		NoAutoAssignIPs      bool
 		Nwid                 string
 		Objtype              string
