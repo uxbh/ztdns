@@ -7,7 +7,6 @@ import "fmt"
 
 // GetNetworkInfo returns a Nework containing information about a ZeroTier network
 func GetNetworkInfo(API, host, networkID string) (*Network, error) {
-	fmt.Printf("%v\n", ^uint(0))
 	resp := new(Network)
 	url := fmt.Sprintf("%s/network/%s", host, networkID)
 	err := getJSON(url, API, resp)
