@@ -7,6 +7,7 @@ import "fmt"
 
 // GetNetworkInfo returns a Nework containing information about a ZeroTier network
 func GetNetworkInfo(API, host, networkID string) (*Network, error) {
+	fmt.Printf("%v\n", ^uint(0))
 	resp := new(Network)
 	url := fmt.Sprintf("%s/network/%s", host, networkID)
 	err := getJSON(url, API, resp)
@@ -20,7 +21,7 @@ func GetNetworkInfo(API, host, networkID string) (*Network, error) {
 type Network struct {
 	ID    string
 	Type  string
-	Clock int64
+	Clock apiTime
 	UI    struct {
 		FlowRulesCollapsed    bool
 		MembersCollapsed      bool
@@ -34,8 +35,8 @@ type Network struct {
 		ActiveMemberCount     int
 		AuthorizedMemberCount int
 		Capabilities          []string
-		Clock                 int64
-		CreationTime          int64
+		Clock                 apiTime
+		CreationTime          apiTime
 		EnableBroadcast       bool
 		ID                    string
 		IPAssignmentPools     []struct {
