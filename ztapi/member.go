@@ -38,7 +38,7 @@ type Members []Member
 type Member struct {
 	ID           string
 	Type         string
-	Clock        int
+	Clock        apiTime
 	NetworkID    string
 	NodeID       string
 	ControllerID string
@@ -58,12 +58,12 @@ type Member struct {
 		}
 		Authorized           bool
 		Capabilities         []string
-		CreationTime         int
+		CreationTime         apiTime
 		ID                   string
 		Identity             string
 		IPAssignments        []string
-		LastAuthorizedTime   int
-		LastDeauthorizedTime int
+		LastAuthorizedTime   apiTime
+		LastDeauthorizedTime apiTime
 		NoAutoAssignIPs      bool
 		Nwid                 string
 		Objtype              string
@@ -75,8 +75,8 @@ type Member struct {
 		VProto               int
 		VRev                 int
 	}
-	LastOnline             int
-	LastOffline            int
+	LastOnline             apiTime
+	LastOffline            apiTime
 	PhysicalAddress        string
 	PhysicalLocation       []float64
 	ClientVersion          string
