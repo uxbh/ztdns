@@ -6,6 +6,7 @@ package dnssrv
 
 import (
 	"fmt"
+	"math/rand"
 	"net"
 	"time"
 
@@ -112,14 +113,14 @@ func parseQuery(m *dns.Msg) {
 		if rec, ok := DNSDatabase[q.Name]; ok {
 			switch q.Qtype {
 			case dns.TypeA:
-				for _, ip := range rec.A {
+				for _, ip := range shuffle(rec.A) {
 					rr, err := dns.NewRR(fmt.Sprintf("%s A %s", q.Name, ip.String()))
 					if err == nil {
 						m.Answer = append(m.Answer, rr)
 					}
 				}
 			case dns.TypeAAAA:
-				for _, ip := range rec.AAAA {
+				for _, ip := range shuffle(rec.AAAA) {
 					rr, err := dns.NewRR(fmt.Sprintf("%s AAAA %s", q.Name, ip.String()))
 					if err == nil {
 						m.Answer = append(m.Answer, rr)
@@ -128,4 +129,17 @@ func parseQuery(m *dns.Msg) {
 			}
 		}
 	}
+}
+
+// shuffle ip addresses for Round Robin dns
+func shuffle(ips []net.IP) []net.IP {
+	r := rand.New(rand.NewSource(time.Now().UnixNano()))
+	ret := make([]net.IP, len(ips))
+	perm := r.Perm(len(ips))
+
+	for i, randIndex := range perm {
+		ret[i] = ips[randIndex]
+	}
+
+	return ret
 }

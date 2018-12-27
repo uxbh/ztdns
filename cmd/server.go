@@ -6,6 +6,7 @@ package cmd
 import (
 	"fmt"
 	"net"
+	"regexp"
 	"time"
 
 	log "github.com/sirupsen/logrus"
@@ -78,6 +79,14 @@ func updateDNS() time.Time {
 	URL := viper.GetString("ZT.URL")
 	suffix := viper.GetString("suffix")
 
+	rrDNSPatterns := make(map[string]*regexp.Regexp)
+	rrDNSRecords := make(map[string][]dnssrv.Records)
+
+	for re, host := range viper.GetStringMapString("RoundRobin") {
+		rrDNSPatterns[host] = regexp.MustCompile(re)
+		log.Debugf("Creating match '%s' for %s host", re, host)
+	}
+
 	// Get all configured networks:
 	for domain, id := range viper.GetStringMapString("Networks") {
 		// Get ZeroTier Network info
@@ -115,16 +124,51 @@ func updateDNS() time.Time {
 				for _, a := range n.Config.IPAssignments {
 					ip4 = append(ip4, net.ParseIP(a))
 				}
-				// Add the record to the database
-				log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
-				dnssrv.DNSDatabase[record] = dnssrv.Records{
+
+				dnsRecord := dnssrv.Records{
 					A:    ip4,
 					AAAA: ip6,
 				}
+
+				// Add the record to the database
+				log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
+				dnssrv.DNSDatabase[record] = dnsRecord
+
+				// Finding matches for RoundRobin dns
+				for host, re := range rrDNSPatterns {
+					log.Debugf("Checking matches for %s host", host)
+					if match := re.FindStringSubmatch(n.Name); match != nil {
+						// prefix := fmt.Sprintf(host, iface(match[1:]))
+						rrRecord := host + "." + domain + "." + suffix + "."
+
+						log.Infof("Adding ips to RR record %-15s IPv4: %-15s IPv6: %s, from host %s", rrRecord, ip4, ip6, n.Name)
+						rrDNSRecords[rrRecord] = append(rrDNSRecords[rrRecord], dnsRecord)
+					}
+				}
 			}
+		}
+
+		for rrRecord, dnsRecords := range rrDNSRecords {
+			rrRecordIps := dnssrv.Records{}
+			for _, ips := range dnsRecords {
+				rrRecordIps.A = append(rrRecordIps.A, ips.A...)
+				rrRecordIps.AAAA = append(rrRecordIps.AAAA, ips.AAAA...)
+			}
+
+			log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", rrRecord, rrRecordIps.A, rrRecordIps.AAAA)
+			dnssrv.DNSDatabase[rrRecord] = rrRecordIps
 		}
 	}
 
 	// Return the current update time
 	return time.Now()
+}
+
+// Convert slice of string to interface for fmt
+func iface(list []string) []interface{} {
+	vals := make([]interface{}, len(list))
+	for i, v := range list {
+		vals[i] = v
+	}
+	return vals
 }

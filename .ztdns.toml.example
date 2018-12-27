@@ -19,3 +19,11 @@ URL = "https://my.zerotier.com/api"
 # Domain does not have to match the configured network name
 [Networks]
 
+# Match section contains zero or more match pairs to create Round robin dns
+# Format is: "regexp to match hosts" = "hostname"
+# Example 1:
+#   "k8s-node-\w" = "k8s-nodes"
+#   From nodes with names k8s-node-23refw, k8s-node-09sf8g
+#   will create round robin record k8s-nodes
+[RoundRobin]
+
