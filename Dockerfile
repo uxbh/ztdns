@@ -5,9 +5,9 @@ WORKDIR /go/src/github.com/uxbh/ztdns
 COPY . .
 
 # Install dependencies
-RUN go get -d -v ./...
+ENV GO111MODULE=on
 # Build static binary
-RUN CGO_ENABLED=0 GOOS=linux go install -v ./...
+RUN CGO_ENABLED=0 GOOS=linux go install
 
 FROM alpine
 
@@ -18,6 +18,6 @@ WORKDIR /app
 # Copy binary
 COPY --from=build-env /go/bin/ztdns .
 
-ENTRYPOINT ["./ztdns", "--debug"]
+ENTRYPOINT ["./ztdns"]
 CMD ["server"]
 EXPOSE 53/udp

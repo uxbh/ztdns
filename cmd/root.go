@@ -43,13 +43,12 @@ func init() {
 
 // initConfig reads in config file and ENV variables if set.
 func initConfig() {
+	viper.SetConfigName(".ztdns") // name of config file (without extension)
+	viper.AddConfigPath(".")      // adding current directory as first search path
+	viper.AddConfigPath("$HOME")  // adding home directory as second search path
+
 	if cfgFile != "" { // enable ability to specify config file via flag
 		viper.SetConfigFile(cfgFile)
-	} else {
-		viper.SetConfigName(".ztdns") // name of config file (without extension)
-		viper.AddConfigPath(".")      // adding current directory as first search path
-		viper.AddConfigPath("$HOME")  // adding home directory as second search path
-		}
 	}
 
 	viper.SetEnvPrefix("ztdns")

@@ -5,4 +5,5 @@ services:
     ports:
      - "5356:53/udp"
     volumes:
-     - .ztdns.toml:/app/.ztdns.toml
+     - .ztdns.toml:/app/.config.toml
+    command: ["--debug", "server", "--config", "/app/.config.toml"]

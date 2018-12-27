@@ -9,8 +9,8 @@ import (
 	"net"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
 	"github.com/miekg/dns"
+	log "github.com/sirupsen/logrus"
 )
 
 // Records contains the types of records the server will respond to.
@@ -36,7 +36,7 @@ func Start(iface string, port int, suffix string, req chan string) error {
 	}
 
 	// attach request handler func
-	dns.HandleFunc(suffix + ".", handleDNSRequest)
+	dns.HandleFunc(suffix+".", handleDNSRequest)
 
 	for _, addr := range getIfaceAddrs(iface) {
 		go func(suffix string, addr net.IP, port int) {
