@@ -133,13 +133,15 @@ func parseQuery(m *dns.Msg) {
 
 // shuffle ip addresses for Round Robin dns
 func shuffle(ips []net.IP) []net.IP {
-	if len(ips) < 2 {
+	ipsLenght := len(ips)
+
+	if ipsLenght < 2 {
 		return ips
 	}
 
 	r := rand.New(rand.NewSource(time.Now().UnixNano()))
-	ret := make([]net.IP, len(ips))
-	perm := r.Perm(len(ips))
+	ret := make([]net.IP, ipsLenght)
+	perm := r.Perm(ipsLenght)
 
 	for i, randIndex := range perm {
 		ret[i] = ips[randIndex]
