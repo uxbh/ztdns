@@ -4,6 +4,6 @@ services:
     build: .
     restart: always
     ports:
-     - "53:53/udp"
+     - "5356:53/udp"
     volumes:
      - .ztdns.toml:/app/.ztdns.toml

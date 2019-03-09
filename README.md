@@ -29,7 +29,7 @@ If you prefer the traditional installation route:
     If you do not want to store your API access token in the configuration file you can also run the
     server with the `env` command: `env 'ZTDNS_ZT.API=<<APIToken>>' ./ztdns server`
 4. Run `ztdns mkconfig` to generate a sample configuration file.
-5. Add your API access token, Network names and IDs, and interface name to the configuration.
+5. Add your API access token, Network names and IDs, and interface name to the configuration. Make sure you call ifconfig to determine your zerotier interface name. It won't always be zt0.
 6. Start the server using `ztdns server`.
 7. Add a DNS entry in your ZeroTier members pointing to the member running ztdns.
 
@@ -39,6 +39,51 @@ Once the server is up and running you will be able to resolve names based on the
 dig @serveraddress member.domain.zt A
 dig @serveraddress member.domain.zt AAAA
 ping member.domain.zt
+```
+
+### Service
+
+If you want to create a service so this starts on boot for Ubuntu, first add a bash script which spins up the server. I called mine `start-ztdns-server`:
+
+```bash
+#!/bin/sh
+/path/to/ztdns server
+```
+
+Then add `ztdns.service` to `/etc/systemd/system/`. Make sure whatever you set `WorkingDirectory` to contains the .ztdns.toml configuration file.
+
+```bash
+[Unit]
+Description=Zerotier DNS Server
+[Service]
+User=<user_name>
+# The configuration file application.properties should be here:
+#change this to your workspace
+WorkingDirectory=/path/containing/ztdns_config/
+#path to executable.
+#executable is a bash script which calls jar file
+ExecStart=/path/to/start-ztdns-server
+SuccessExitStatus=143
+TimeoutStopSec=10
+Restart=on-failure
+RestartSec=5
+[Install]
+WantedBy=multi-user.target
+```
+
+Then run systemctl enable and start:
+
+``bash
+sudo systemctl daemon-reload
+sudo systemctl enable ztdns.service
+sudo systemctl start ztdns.service
+``
+
+If you want to stop the service
+
+```bash
+sudo systemctl stop ztdns.service
+sudo systemctl disable ztdns.service
 ```
 
 ### Docker
