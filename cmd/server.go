@@ -8,11 +8,11 @@ import (
 	"net"
 	"time"
 
-	log "github.com/Sirupsen/logrus"
+	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/uxbh/ztdns/dnssrv"
-	"github.com/uxbh/ztdns/ztapi"
+	"github.com/davidwatkins/ztdns/dnssrv"
+	"github.com/davidwatkins/ztdns/ztapi"
 )
 
 // serverCmd represents the server command

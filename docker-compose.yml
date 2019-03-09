@@ -1,7 +1,8 @@
-version: '3'
+version: '2'
 services:
   ztdns:
     build: .
+    restart: always
     ports:
      - "5356:53/udp"
     volumes:
