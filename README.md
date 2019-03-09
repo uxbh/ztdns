@@ -73,11 +73,11 @@ WantedBy=multi-user.target
 
 Then run systemctl enable and start:
 
-``bash
+```bash
 sudo systemctl daemon-reload
 sudo systemctl enable ztdns.service
 sudo systemctl start ztdns.service
-``
+```
 
 If you want to stop the service
 
