@@ -1,5 +1,5 @@
 // Copyright © 2017 uxbh
-// This file is part of github.com/uxbh/ztdns.
+// This file is part of github.com/hatemosphere/ztdns.
 
 // Package dnssrv implements a simple DNS server.
 package dnssrv

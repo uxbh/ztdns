@@ -18,9 +18,9 @@ If you prefer the traditional installation route:
 
 #### Install
 
-1. First use `go get` to install the latest version, or download a precompiled release from [https://github.com/uxbh/ztdns/releases](https://github.com/uxbh/ztdns/releases)
+1. First use `go get` to install the latest version, or download a precompiled release from [https://github.com/hatemosphere/ztdns/releases](https://github.com/hatemosphere/ztdns/releases)
     ``` bash
-    go get -u github.com/uxbh/ztdns/
+    go get -u github.com/hatemosphere/ztdns/
     go build
     ```
 2. **If you are running on Linux**, run `sudo setcap cap_net_bind_service=+eip ./ztdns` to enable non-root users to bind privileged ports. On other operating systems, the program may need to be run as an administrator.

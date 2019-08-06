@@ -1,5 +1,5 @@
 // Copyright © 2017 uxbh
-// This file is part of github.com/uxbh/ztdns.
+// This file is part of github.com/hatemosphere/ztdns.
 
 package cmd
 
@@ -12,8 +12,8 @@ import (
 	log "github.com/sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/uxbh/ztdns/dnssrv"
-	"github.com/uxbh/ztdns/ztapi"
+	"github.com/hatemosphere/ztdns/dnssrv"
+	"github.com/hatemosphere/ztdns/ztapi"
 )
 
 // serverCmd represents the server command
