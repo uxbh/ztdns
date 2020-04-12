@@ -1,0 +1,83 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "ztdns.fullname" . }}
+  labels:
+    {{- include "ztdns.labels" . | nindent 4 }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      {{- include "ztdns.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      annotations:
+        checksum.config: {{ include (print $.Template.BasePath "/configmap.yaml") . | sha256sum | trunc 63 }}
+      labels:
+        {{- include "ztdns.selectorLabels" . | nindent 8 }}
+    spec:
+    {{- with .Values.imagePullSecrets }}
+      imagePullSecrets:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+      securityContext:
+        {{- toYaml .Values.podSecurityContext | nindent 8 }}
+      volumes:
+        - name: ztdns-config
+          configMap:
+            name: {{ include "ztdns.fullname" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          securityContext:
+            {{- toYaml .Values.securityContext | nindent 12 }}
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - "server"
+            - "--config"
+            - "/etc/ztdns/config/ztdns.config"
+          env:
+            - name: ZTDNS_ZT.API
+              valueFrom:
+                secretKeyRef:
+                  name: {{ include "ztdns.fullname" . }}
+                  key: ZEROTIER_TOKEN
+          volumeMounts:
+            - name: ztdns-config
+              mountPath: /root/
+          ports:
+            - name: dns
+              containerPort: {{ .Values.zerotier.port }}
+              protocol: UDP
+          livenessProbe:
+            exec:
+              command:
+                - "nc"
+                - "-z"
+                - "-v"
+                - "-u"
+                - "127.0.0.1"
+                - "{{ .Values.zerotier.port }}"
+          readinessProbe:
+            exec:
+              command:
+                - "nc"
+                - "-z"
+                - "-v"
+                - "-u"
+                - "127.0.0.1"
+                - "{{ .Values.zerotier.port }}"
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+    {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
+    {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+    {{- end }}
