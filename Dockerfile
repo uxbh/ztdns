@@ -1,4 +1,4 @@
-FROM golang:1 AS build-env
+FROM golang:1.14 AS build-env
 
 WORKDIR /go/src/github.com/uxbh/ztdns
 # Add source
