@@ -1,0 +1,28 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "ztdns.fullname" . }}
+  labels:
+    {{- include "ztdns.labels" . | nindent 4 }}
+data:
+  .ztdns.toml: |-
+    # Configuration file for ztDNS
+    suffix = "{{ .Values.zerotier.suffix }}"
+    port = {{ .Values.zerotier.port }}
+
+    # Number of minutes to wait before updating the DNS database again (Default: 30)
+    DBRefresh = {{ .Values.zerotier.dbRefresh }}
+
+    # This section contains information related to your ZeroTier config
+    [ZT]
+    # URL is the url of the ZeroTier controller API
+    URL = "{{ .Values.zerotier.url }}"
+
+    # This section contains one or more ZeroTier networks
+    # Format is: domain = "NetworkID"
+    # Domain does not have to match the configured network name
+    [Networks]
+    {{- range .Values.zerotier.networks }}
+    {{ .domain }} = "{{ .networkId }}"
+    {{- end }}
+
