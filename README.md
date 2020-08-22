@@ -41,6 +41,10 @@ dig @serveraddress member.domain.zt AAAA
 ping member.domain.zt
 ```
 
+### Arch Linux (install with your favorite Arch package manager: aurman, pacaur, pikar, yay)
+- [ztdns-git](https://aur.archlinux.org/packages/ztdns-git/) Package now availabe on Arch Linux via AUR.  
+`yay -S ztdns-git`
+
 ### Docker
 
 If you prefer to run the server with Docker:
