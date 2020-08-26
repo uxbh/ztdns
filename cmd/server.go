@@ -118,7 +118,7 @@ func updateDNS() time.Time {
 					ip4 = append(ip4, net.ParseIP(a))
 				}
 				// Add the record to the database
-				for _, record := range *records {
+				for _, record := range records {
 					recordN := record + "." + domain + "." + suffix + "."
 					log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", recordN, ip4, ip6)
 					dnssrv.DNSDatabase[recordN] = dnssrv.Records{
