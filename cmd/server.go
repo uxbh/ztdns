@@ -4,6 +4,7 @@
 package cmd
 
 import (
+	"strings"
 	"fmt"
 	"net"
 	"time"
@@ -11,8 +12,8 @@ import (
 	log "github.com/Sirupsen/logrus"
 	"github.com/spf13/cobra"
 	"github.com/spf13/viper"
-	"github.com/uxbh/ztdns/dnssrv"
-	"github.com/uxbh/ztdns/ztapi"
+	"github.com/kingecg/ztdns/dnssrv"
+	"github.com/kingecg/ztdns/ztapi"
 )
 
 // serverCmd represents the server command
@@ -98,7 +99,8 @@ func updateDNS() time.Time {
 			// For all online members
 			if n.Online {
 				// Clear current DNS records
-				record := n.Name + "." + domain + "." + suffix + "."
+				// record := n.Name + "." + domain + "." + suffix + "."
+				records := strings.Fields(n.Name)
 				dnssrv.DNSDatabase[record] = dnssrv.Records{}
 				ip6 := []net.IP{}
 				ip4 := []net.IP{}
@@ -116,11 +118,14 @@ func updateDNS() time.Time {
 					ip4 = append(ip4, net.ParseIP(a))
 				}
 				// Add the record to the database
-				log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
-				dnssrv.DNSDatabase[record] = dnssrv.Records{
-					A:    ip4,
-					AAAA: ip6,
+				for _, record = range *records {
+					log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
+					dnssrv.DNSDatabase[record] = dnssrv.Records{
+						A:    ip4,
+						AAAA: ip6,
+					}
 				}
+				
 			}
 		}
 	}
