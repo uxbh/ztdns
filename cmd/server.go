@@ -101,7 +101,7 @@ func updateDNS() time.Time {
 				// Clear current DNS records
 				// record := n.Name + "." + domain + "." + suffix + "."
 				records := strings.Fields(n.Name)
-				dnssrv.DNSDatabase[record] = dnssrv.Records{}
+				
 				ip6 := []net.IP{}
 				ip4 := []net.IP{}
 				// Get 6Plane address if network has it enabled
@@ -119,7 +119,9 @@ func updateDNS() time.Time {
 				}
 				// Add the record to the database
 				for _, record := range records {
+					
 					recordN := record + "." + domain + "." + suffix + "."
+					dnssrv.DNSDatabase[recordN] = dnssrv.Records{}
 					log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", recordN, ip4, ip6)
 					dnssrv.DNSDatabase[recordN] = dnssrv.Records{
 						A:    ip4,
