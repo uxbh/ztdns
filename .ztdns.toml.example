@@ -17,5 +17,9 @@ URL = "https://my.zerotier.com/api"
 # This section contains one or more ZeroTier networks
 # Format is: domain = "NetworkID"
 # Domain does not have to match the configured network name
+# Domain default will be not used the url will be member.tz
 [Networks]
 
+# Subdomains for network indexed by name, default use "deafult" name
+# Format is: domain.member = ["subdomain"]
+[Subdomains]
