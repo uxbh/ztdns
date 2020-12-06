@@ -12,7 +12,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/uxbh/ztdns/dnssrv"
 	"github.com/uxbh/ztdns/ztapi"
-	"github.com/uxbh/aleacevedo/helpers"
+	"github.com/aleacevedo/ztdns/helpers"
 )
 
 // serverCmd represents the server command

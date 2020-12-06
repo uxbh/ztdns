@@ -1,3 +1,5 @@
+This is a fork of [uxbh/ztdns](https://github.com/uxbh/ztdns).
+
 # ZerotierDNS
 
 ztDNS is a dedicated DNS server for a ZeroTier virtual network.
