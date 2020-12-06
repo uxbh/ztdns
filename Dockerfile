@@ -1,6 +1,6 @@
 FROM golang:1 AS build-env
 
-WORKDIR /go/src/github.com/uxbh/ztdns
+WORKDIR /go/src/github.com/aleacevedo/ztdns
 # Add source
 COPY . .
 
