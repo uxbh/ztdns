@@ -5,7 +5,6 @@ package cmd
 
 import (
 	"fmt"
-	"net"
 	"time"
 
 	log "github.com/Sirupsen/logrus"
@@ -13,6 +12,7 @@ import (
 	"github.com/spf13/viper"
 	"github.com/uxbh/ztdns/dnssrv"
 	"github.com/uxbh/ztdns/ztapi"
+	"github.com/uxbh/aleacevedo/helpers"
 )
 
 // serverCmd represents the server command
@@ -88,38 +88,30 @@ func updateDNS() time.Time {
 
 		// Get list of members in network
 		log.Infof("Getting Members of Network: %s (%s)", ztnetwork.Config.Name, domain)
-		lst, err := ztapi.GetMemberList(API, URL, ztnetwork.ID)
+		members, err := ztapi.GetMemberList(API, URL, ztnetwork.ID)
 		if err != nil {
 			log.Fatalf("Unable to update DNS entries: %s", err.Error())
 		}
-		log.Infof("Got %d members", len(*lst))
+		log.Infof("Got %d members", len(*members))
 
-		for _, n := range *lst {
+		for _, member := range *members {
 			// For all online members
-			if n.Online {
-				// Clear current DNS records
-				record := n.Name + "." + domain + "." + suffix + "."
-				dnssrv.DNSDatabase[record] = dnssrv.Records{}
-				ip6 := []net.IP{}
-				ip4 := []net.IP{}
-				// Get 6Plane address if network has it enabled
-				if ztnetwork.Config.V6AssignMode.Sixplane {
-					ip6 = append(ip6, n.Get6Plane())
-				}
-				// Get RFC4193 address if network has it enabled
-				if ztnetwork.Config.V6AssignMode.Rfc4193 {
-					ip6 = append(ip6, n.GetRFC4193())
-				}
+			if member.Online {
 
-				// Get the rest of the address assigned to the member
-				for _, a := range n.Config.IPAssignments {
-					ip4 = append(ip4, net.ParseIP(a))
-				}
-				// Add the record to the database
-				log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", record, ip4, ip6)
-				dnssrv.DNSDatabase[record] = dnssrv.Records{
-					A:    ip4,
-					AAAA: ip6,
+				subdomains := viper.GetStringSlice(fmt.Sprintf("Subdomains.%s.%s", domain, member.Name))
+				
+				routes := helpers.GenerateRoutes(member.Name, domain, suffix, subdomains)
+				ip6, ip4 := helpers.GenerateIPs(ztnetwork, &member)
+
+				for _, route := range routes {
+					// Clear current DNS records
+					dnssrv.DNSDatabase[route] = dnssrv.Records{}
+					// Add the record to the database
+					log.Infof("Updating %-15s IPv4: %-15s IPv6: %s", route, ip4, ip6)
+					dnssrv.DNSDatabase[route] = dnssrv.Records{
+						A:    ip4,
+						AAAA: ip6,
+					}
 				}
 			}
 		}
