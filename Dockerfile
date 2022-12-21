@@ -1,13 +1,11 @@
-FROM golang:1 AS build-env
+FROM golang:1.19 AS build-env
 
 WORKDIR /go/src/github.com/uxbh/ztdns
 # Add source
 COPY . .
 
-# Install dependencies
-RUN go get -d -v ./...
 # Build static binary
-RUN CGO_ENABLED=0 GOOS=linux go install -v ./...
+RUN CGO_ENABLED=0 GOOS=linux go build
 
 FROM alpine
 
@@ -16,7 +14,7 @@ RUN apk update && apk add ca-certificates && rm -rf /var/cache/apk/*
 
 WORKDIR /app
 # Copy binary
-COPY --from=build-env /go/bin/ztdns .
+COPY --from=build-env /go/src/github.com/uxbh/ztdns/ztdns .
 
 ENTRYPOINT ["./ztdns", "--debug"]
 CMD ["server"]
